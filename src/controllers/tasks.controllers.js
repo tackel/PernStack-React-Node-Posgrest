@@ -1,18 +1,17 @@
 // ejecutar funciones cuando una url es consultada
 const pooldb = require("../db");
 
-const getAllTasks = async (req, res) => {
+const getAllTasks = async (req, res, next) => {
   try {
     const allTasks = await pooldb.query("SELECT * FROM task");
     //console.log(allTasks);
     res.json(allTasks.rows);
   } catch (error) {
-    console.log(error.message);
-    res.json({ error: error.message });
+    next(error);
   }
 };
 
-const getTask = async (req, res) => {
+const getTask = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await pooldb.query("SELECT * FROM task WHERE id = $1", [id]);
@@ -21,11 +20,11 @@ const getTask = async (req, res) => {
     }
     res.json(result.rows[0]);
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
-const createTask = async (req, res) => {
+const createTask = async (req, res, next) => {
   const task = req.body;
   const { title, descripcion } = task;
   try {
@@ -38,12 +37,13 @@ const createTask = async (req, res) => {
     //console.log(task);
     res.json(result.rows[0]);
   } catch (error) {
-    console.log(error.message);
-    res.json({ error: error.message }); //esto esta bien en desarrollo, para produccion se mandaun mensaje 500 o algo asi
+    //console.log(error.message);
+    //res.json({ error: error.message }); //esto esta bien en desarrollo, para produccion se mandaun mensaje 500 o algo asi
+    next(error);
   }
 };
 
-const deleteTask = async (req, res) => {
+const deleteTask = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await pooldb.query("DELETE FROM task WHERE id = $1", [id]); // RETURNING * luego del $1 devuelve el task eliminado
@@ -54,11 +54,11 @@ const deleteTask = async (req, res) => {
     }
     return res.sendStatus(204);
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
-const updateTask = async (req, res) => {
+const updateTask = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { title, description } = req.body;
@@ -79,7 +79,7 @@ const updateTask = async (req, res) => {
     }
     res.json(result.rows[0]);
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
