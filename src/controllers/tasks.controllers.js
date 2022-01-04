@@ -26,14 +26,14 @@ const getTask = async (req, res, next) => {
 
 const createTask = async (req, res, next) => {
   const task = req.body;
-  const { title, descripcion } = task;
+  const { title, description } = task;
   try {
     const result = await pooldb.query(
       "INSERT INTO task(title, description) VALUES ($1, $2) RETURNING *", // RETURNING praa que devuelva los valores insertados
-      [title, descripcion]
+      [title, description]
     );
-    //const {title, descripcion} = req.body // tambien se puede poner asi y te ahorras 1 linea
-    //console.log(title, descripcion);
+    //const {title, description} = req.body // tambien se puede poner asi y te ahorras 1 linea
+    //console.log(title, description);
     //console.log(task);
     res.json(result.rows[0]);
   } catch (error) {
